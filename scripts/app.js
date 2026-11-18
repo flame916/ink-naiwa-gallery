@@ -3,6 +3,9 @@
  */
 (function initApp() {
   const track = document.getElementById("galleryTrack");
+  const dotsContainer = document.getElementById("galleryDots");
+  const btnPrevPainting = document.getElementById("btnPrevPainting");
+  const btnNextPainting = document.getElementById("btnNextPainting");
   const btnCallFamily = document.getElementById("btnCallFamily");
   const btnAudioMode = document.getElementById("btnAudioMode");
   const audioLabel = document.getElementById("audioLabel");
@@ -35,6 +38,9 @@
   });
 
   const portraits = [];
+  const cards = [];
+  const dotButtons = [];
+  let activeIndex = 0;
   let currentModalItem = null;
   let bannerTimer = null;
 
@@ -75,6 +81,7 @@
     `;
 
     track.appendChild(card);
+    cards.push(card);
 
     const canvas = card.querySelector(".portrait-canvas");
     const portrait = new window.LivingPortrait(item, canvas, card, globalMouse);
@@ -84,6 +91,59 @@
       openArchiveModal(item);
     });
   });
+
+  // 构建下方水墨点阵切换导航
+  function setActivePainting(nextIndex, playSound = true) {
+    const total = cards.length;
+    if (!total) return;
+    activeIndex = ((nextIndex % total) + total) % total;
+
+    cards.forEach((c, idx) => {
+      c.classList.toggle("is-current", idx === activeIndex);
+    });
+    dotButtons.forEach((btn, idx) => {
+      const active = idx === activeIndex;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-current", active ? "true" : "false");
+    });
+
+    if (playSound) {
+      window.InkAudio.playWhooshInk();
+      if (window.InkAmbient) {
+        window.InkAmbient.triggerWash(window.innerWidth * 0.5, window.innerHeight * 0.48, 1.5);
+      }
+    }
+  }
+
+  if (dotsContainer) {
+    window.INK_PAINTINGS.forEach((item, idx) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "ink-dot-btn";
+      dot.setAttribute("aria-label", `切换至 ${item.title}`);
+      dot.dataset.title = `${item.index} ${item.title.replace(/[《》]/g, "")}`;
+      dot.innerHTML = `<span class="ink-dot-core"></span>`;
+      dot.addEventListener("click", () => setActivePainting(idx, true));
+      dotsContainer.appendChild(dot);
+      dotButtons.push(dot);
+    });
+  }
+
+  if (btnPrevPainting) {
+    btnPrevPainting.addEventListener("click", () => setActivePainting(activeIndex - 1, true));
+  }
+  if (btnNextPainting) {
+    btnNextPainting.addEventListener("click", () => setActivePainting(activeIndex + 1, true));
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (archiveModal && !archiveModal.hidden) return;
+    if (e.key === "ArrowLeft") setActivePainting(activeIndex - 1, true);
+    if (e.key === "ArrowRight") setActivePainting(activeIndex + 1, true);
+  });
+
+  // 初始化显示第一幅画作
+  setActivePainting(0, false);
 
   // 音效印章「聽音」三态循环
   function refreshAudioUI(mode) {
@@ -103,26 +163,23 @@
     });
   }
 
-  // 跨框串门调度器（集成进「喚蛙」印章）
+  // 跨框串门调度器（单幅焦点下：另一幅画的奶蛙自画外飞入当前画作客串）
   function triggerCrossFrameVisit() {
     if (portraits.length < 2) return;
-    const fromIdx = Math.floor(Math.random() * portraits.length);
-    const toIdx = (fromIdx + 1) % portraits.length;
+    const fromIdx = (activeIndex + 1 + Math.floor(Math.random() * (portraits.length - 1))) % portraits.length;
     const fromP = portraits[fromIdx];
-    const toP = portraits[toIdx];
+    const toP = portraits[activeIndex];
 
-    const fromRect = fromP.canvas.getBoundingClientRect();
     const toRect = toP.canvas.getBoundingClientRect();
-
     const flyer = document.createElement("div");
     flyer.className = "flying-naiwa";
     flyer.innerHTML = `<img src="${fromP.data.activeSrc}" alt="串门奶蛙" />`;
     visitFlightLayer.appendChild(flyer);
 
-    const startX = fromRect.left + fromRect.width * 0.5;
-    const startY = fromRect.top + fromRect.height * 0.4;
-    const endX = toRect.left + toRect.width * 0.65;
-    const endY = toRect.top + toRect.height * 0.72;
+    const startX = window.innerWidth * 0.88;
+    const startY = window.innerHeight * 0.24;
+    const endX = toRect.left + toRect.width * 0.68;
+    const endY = toRect.top + toRect.height * 0.74;
 
     flyer.style.left = `${startX}px`;
     flyer.style.top = `${startY}px`;
@@ -153,30 +210,27 @@
     requestAnimationFrame(animateFlight);
   }
 
-  // 朱文方印「喚蛙」：全网呼叫奶家人（六蛙齐动 + 水墨波澜 + 跨框串门）
+  // 朱文方印「喚蛙」：唤醒当前焦点画作并召唤蛙友客串
   if (btnCallFamily) {
     btnCallFamily.addEventListener("click", () => {
       if (window.InkAudio.mode === "off") {
         window.InkAudio.setMode("meme");
         refreshAudioUI("meme");
       }
-      showBanner("全网呼叫奶家人——每日来上这么两下，浑身都通透了！", 5400);
+      showBanner("全网呼叫奶家人——每日来上这么两下，浑身都通透了！", 4800);
       window.InkAudio.playWhooshInk();
 
-      portraits.forEach((p, idx) => {
-        setTimeout(() => {
-          p.forceWake(5400);
-          if (window.InkAmbient) {
-            const r = p.canvas.getBoundingClientRect();
-            window.InkAmbient.triggerWash(r.left + r.width * 0.5, r.top + r.height * 0.5, 1.25);
-          }
-          if (idx % 2 === 0) {
-            window.InkAudio.playPortraitEffect(p.data.motion.style, true);
-          }
-        }, idx * 140);
-      });
+      const cur = portraits[activeIndex];
+      if (cur) {
+        cur.forceWake(5400);
+        window.InkAudio.playPortraitEffect(cur.data.motion.style, true);
+        if (window.InkAmbient) {
+          const r = cur.canvas.getBoundingClientRect();
+          window.InkAmbient.triggerWash(r.left + r.width * 0.5, r.top + r.height * 0.5, 1.45);
+        }
+      }
 
-      setTimeout(triggerCrossFrameVisit, 650);
+      setTimeout(triggerCrossFrameVisit, 600);
     });
   }
 

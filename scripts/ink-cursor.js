@@ -137,12 +137,90 @@
     ctx.restore();
   }
 
+  // 左侧苍劲水墨古松斜枝
+  function drawInkPineBranch(ctx, timeSec) {
+    const sway = Math.sin(timeSec * 0.55 + 1.2) * 3;
+    ctx.save();
+    ctx.strokeStyle = "rgba(22, 21, 19, 0.14)";
+    ctx.fillStyle = "rgba(26, 25, 22, 0.10)";
+    ctx.lineCap = "round";
+
+    ctx.lineWidth = 4.2;
+    ctx.beginPath();
+    ctx.moveTo(-10, height * 0.28);
+    ctx.quadraticCurveTo(width * 0.08, height * 0.24, width * 0.14 + sway, height * 0.29);
+    ctx.stroke();
+
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(width * 0.07, height * 0.26);
+    ctx.quadraticCurveTo(width * 0.11, height * 0.20, width * 0.17 + sway, height * 0.21);
+    ctx.stroke();
+
+    // 淡墨松针簇
+    const clusters = [
+      [width * 0.14 + sway, height * 0.29, 30],
+      [width * 0.17 + sway, height * 0.21, 24],
+      [width * 0.08, height * 0.24, 22]
+    ];
+    clusters.forEach(([cx, cy, r]) => {
+      for (let i = -3; i <= 3; i++) {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        const a = -Math.PI * 0.5 + i * 0.28;
+        ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.65);
+        ctx.lineWidth = 1.1;
+        ctx.stroke();
+      }
+    });
+    ctx.restore();
+  }
+
+  // 天际掠过的水墨远雁
+  function drawInkBirds(ctx, timeSec) {
+    ctx.save();
+    ctx.strokeStyle = "rgba(28, 27, 24, 0.22)";
+    ctx.lineWidth = 1.4;
+    ctx.lineCap = "round";
+    for (let i = 0; i < 4; i++) {
+      const bx = ((0.18 + i * 0.045 + timeSec * 0.008) % 1.2 - 0.1) * width;
+      const by = height * (0.16 + (i % 2) * 0.03) + Math.sin(timeSec * 1.4 + i) * 4;
+      const wing = 6 + Math.sin(timeSec * 4.5 + i * 0.9) * 2.5;
+      ctx.beginPath();
+      ctx.moveTo(bx - 8, by + wing * 0.3);
+      ctx.quadraticCurveTo(bx - 3, by - wing * 0.4, bx, by);
+      ctx.quadraticCurveTo(bx + 3, by - wing * 0.4, bx + 8, by + wing * 0.3);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // 底部水面淡墨涟漪
+  function drawWaterRipples(ctx, timeSec) {
+    ctx.save();
+    ctx.strokeStyle = "rgba(38, 37, 34, 0.08)";
+    ctx.lineWidth = 1.2;
+    for (let i = 0; i < 4; i++) {
+      const rx = width * (0.22 + i * 0.19) + Math.sin(timeSec * 0.3 + i) * 14;
+      const ry = height * (0.91 + (i % 2) * 0.03);
+      const len = 48 + (i % 3) * 24;
+      ctx.beginPath();
+      ctx.moveTo(rx - len, ry);
+      ctx.quadraticCurveTo(rx, ry + 3, rx + len, ry);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
   function renderBg(timeSec) {
     if (!bgCtx) return;
     bgCtx.clearRect(0, 0, width, height);
 
     drawDistantMountains(bgCtx, timeSec);
+    drawWaterRipples(bgCtx, timeSec);
+    drawInkPineBranch(bgCtx, timeSec);
     drawInkBambooCorner(bgCtx, timeSec);
+    drawInkBirds(bgCtx, timeSec);
 
     // 缓慢流动的水墨云烟团
     clouds.forEach((c) => {

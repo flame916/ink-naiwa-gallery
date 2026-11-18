@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>墨韵蛙影 · 丹青幻境</title>
-  <link rel="stylesheet" href="styles/ink-theme.css" />
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="styles/ink-theme.css?v=20261118_5" />
 </head>
 <body>
   <!-- SVG 水墨置换与毛边渗墨滤镜 -->
@@ -57,11 +58,22 @@
     <span id="bannerText">全网呼叫奶家人——每日来上这么两下，浑身都通透了！</span>
   </div>
 
-  <!-- 极简留白展厅（无方框、无说明条） -->
+  <!-- 单幅画作水墨焦点展厅 -->
   <main class="gallery-stage">
-    <section id="galleryTrack" class="gallery-track" aria-label="六大传世水墨奶蛙动态画轴">
-      <!-- 由 app.js 动态渲染 6 幅水墨装裱画轴 -->
-    </section>
+    <div class="stage-showcase">
+      <button id="btnPrevPainting" type="button" class="stage-nav-btn stage-nav-prev" aria-label="上一幅画作" title="上一幅（←）">‹</button>
+
+      <section id="galleryTrack" class="gallery-track" aria-label="传世水墨奶蛙动态画作展示">
+        <!-- 由 app.js 动态渲染单幅焦点切换画作 -->
+      </section>
+
+      <button id="btnNextPainting" type="button" class="stage-nav-btn stage-nav-next" aria-label="下一幅画作" title="下一幅（→）">›</button>
+    </div>
+
+    <!-- 下方水墨点阵切换导航 -->
+    <nav id="galleryDots" class="ink-dot-matrix" aria-label="画作点阵切换">
+      <!-- 由 app.js 动态生成 6 枚水墨点阵 -->
+    </nav>
 
     <!-- 跨框串门水墨流光层 -->
     <div id="visitFlightLayer" class="visit-flight-layer" aria-hidden="true"></div>
@@ -137,10 +149,10 @@
     </div>
   </div>
 
-  <script src="scripts/paintings-data.js"></script>
-  <script src="scripts/ink-audio.js"></script>
-  <script src="scripts/ink-cursor.js"></script>
-  <script src="scripts/portrait-engine.js"></script>
-  <script src="scripts/app.js"></script>
+  <script src="scripts/paintings-data.js?v=20261118_5"></script>
+  <script src="scripts/ink-audio.js?v=20261118_5"></script>
+  <script src="scripts/ink-cursor.js?v=20261118_5"></script>
+  <script src="scripts/portrait-engine.js?v=20261118_5"></script>
+  <script src="scripts/app.js?v=20261118_5"></script>
 </body>
 </html>

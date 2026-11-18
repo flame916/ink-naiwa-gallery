@@ -268,70 +268,104 @@ html, body {
 }
 
 /* ==========================================================================
-   画廊展厅：紧凑满铺布局（奶蛙画作为绝对主体、大幅减少留白）
+   单幅焦点展厅：单画最大居中、弱化边框、水墨点阵切换
    ========================================================================== */
 .gallery-stage {
   position: relative;
   z-index: 10;
-  padding: 2px 14px 16px;
-  max-width: 1720px;
+  padding: 0 18px 8px;
+  max-width: 1480px;
+  min-height: calc(100vh - 108px);
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.stage-showcase {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.stage-nav-btn {
+  width: 44px;
+  height: 76px;
+  border: none;
+  background: transparent;
+  color: rgba(34, 33, 30, 0.36);
+  font-family: var(--font-serif);
+  font-size: 38px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.25s ease, transform 0.25s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.stage-nav-btn:hover {
+  color: var(--ink-charcoal);
+  transform: scale(1.14);
 }
 
 .gallery-track {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: end;
-  justify-items: center;
-  gap: 24px 16px;
-  padding: 4px 2px 12px;
-}
-
-@media (max-width: 1120px) {
-  .gallery-track {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 700px) {
-  .gallery-track {
-    grid-template-columns: 1fr;
-  }
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1080px;
 }
 
 /* ==========================================================================
-   水墨绫裱画轴与双层泼墨光晕（Ink Aura）
+   弱化画框的融墨画作容器
    ========================================================================== */
 .scroll-card {
   position: relative;
   max-width: 100%;
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: inkFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.scroll-card:hover {
-  transform: translateY(-4px);
+.scroll-card.is-current {
+  display: flex;
 }
 
-/* 画轴背后的双层生宣浓淡墨晕 */
+@keyframes inkFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.975);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 画作背后的双层浓淡墨晕（直接托起画面主体） */
 .ink-aura {
   position: absolute;
-  top: 4%;
-  left: -12%;
-  right: -12%;
-  bottom: 10%;
+  top: 2%;
+  left: -10%;
+  right: -10%;
+  bottom: 8%;
   border-radius: 50%;
   background: radial-gradient(
     ellipse at center,
-    rgba(28, 27, 24, 0.24) 0%,
-    rgba(56, 54, 48, 0.12) 48%,
+    rgba(24, 23, 20, 0.22) 0%,
+    rgba(52, 50, 45, 0.1) 46%,
     transparent 74%
   );
   filter: url(#ink-wash-heavy);
-  opacity: 0;
-  transform: scale(0.76);
+  opacity: 0.48;
+  transform: scale(0.94);
   transition: opacity 0.65s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
   z-index: -1;
@@ -340,103 +374,134 @@ html, body {
 .scroll-card:hover .ink-aura,
 .scroll-card.is-active .ink-aura {
   opacity: 1;
-  transform: scale(1.1);
+  transform: scale(1.12);
 }
 
-/* 挂绳与乌木天杆 */
-.scroll-hanger {
-  width: 52%;
-  height: 12px;
-  display: flex;
-  justify-content: center;
+/* 弱化厚重天杆/挂绳/地轴边框，令画作直融水墨空间 */
+.scroll-hanger,
+.scroll-top-rod,
+.scroll-bottom-rod {
+  display: none;
 }
 
-.scroll-hanger::before {
-  content: "";
-  width: 66%;
-  height: 14px;
-  border-top: 1.5px solid rgba(40, 38, 35, 0.55);
-  border-left: 1.5px solid rgba(40, 38, 35, 0.45);
-  border-right: 1.5px solid rgba(40, 38, 35, 0.45);
-  transform: perspective(120px) rotateX(22deg);
-}
-
-.scroll-top-rod {
-  width: calc(100% + 10px);
-  height: 7px;
-  background: linear-gradient(180deg, #3b3935 0%, var(--rosewood-dark) 100%);
-  border-radius: 4px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.26);
-}
-
-/* 水墨青灰绫绢装裱边框（减薄边框，突出画中奶蛙） */
 .scroll-silk-body {
   position: relative;
   max-width: 100%;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, transparent 50%, rgba(0, 0, 0, 0.08) 100%),
-    repeating-linear-gradient(45deg, rgba(45, 44, 40, 0.03) 0px, rgba(45, 44, 40, 0.03) 2px, transparent 2px, transparent 8px),
-    var(--silk-mount);
-  padding: 12px 9px 14px;
-  border-left: 1px solid rgba(35, 34, 30, 0.28);
-  border-right: 1px solid rgba(35, 34, 30, 0.28);
-  box-shadow:
-    0 18px 36px -14px rgba(16, 15, 13, 0.38),
-    inset 0 0 16px rgba(45, 43, 38, 0.14);
+  background: transparent;
+  padding: 0;
+  border: none;
+  box-shadow: none;
 }
 
 .scroll-silk-body::before,
 .scroll-silk-body::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 13px;
-  height: 18px;
-  background: linear-gradient(180deg, #b8ad94 0%, #9b8e73 100%);
-  border-left: 1px solid rgba(70, 58, 40, 0.2);
-  border-right: 1px solid rgba(70, 58, 40, 0.2);
-  opacity: 0.7;
+  display: none;
 }
-.scroll-silk-body::before { left: 26%; }
-.scroll-silk-body::after  { right: 26%; }
 
 .canvas-bezel {
   position: relative;
-  padding: 4px;
-  background: var(--silk-inner);
-  border: 1px solid rgba(60, 50, 35, 0.28);
-  box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.22);
+  padding: 0;
+  background: transparent;
+  border: 1px solid rgba(34, 33, 30, 0.11);
+  box-shadow:
+    0 24px 56px -18px rgba(16, 15, 13, 0.34),
+    0 0 28px rgba(231, 229, 221, 0.55);
 }
 
 .portrait-canvas {
   display: block;
-  max-width: 100%;
+  width: auto !important;
   height: auto !important;
+  max-height: calc(100vh - 225px);
+  max-width: 82vw;
   cursor: pointer;
-  background: #9f8c6c;
+  background: transparent;
 }
 
-.scroll-bottom-rod {
+/* 下方水墨点阵切换器 */
+.ink-dot-matrix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 6px 14px 2px;
+}
+
+.ink-dot-btn {
   position: relative;
-  width: calc(100% + 26px);
-  height: 12px;
-  background: linear-gradient(180deg, #3c3a36 0%, var(--rosewood) 45%, var(--rosewood-dark) 100%);
-  border-radius: 6px;
-  box-shadow: 0 7px 14px rgba(16, 15, 13, 0.34);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease;
 }
 
-.scroll-bottom-rod::before,
-.scroll-bottom-rod::after {
-  content: "";
-  position: absolute;
-  top: -1px;
-  width: 13px;
-  height: 16px;
-  background: radial-gradient(circle at 35% 35%, #d9c9a8 0%, #8f7e5c 70%, #5e5038 100%);
-  border-radius: 3px;
+.ink-dot-btn:hover {
+  transform: scale(1.2);
 }
-.scroll-bottom-rod::before { left: -4px; }
-.scroll-bottom-rod::after  { right: -4px; }
+
+.ink-dot-core {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(34, 33, 30, 0.32);
+  filter: url(#ink-bleed-edge);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ink-dot-btn:hover .ink-dot-core {
+  background: var(--ink-dense);
+}
+
+.ink-dot-btn.is-active .ink-dot-core {
+  width: 13px;
+  height: 13px;
+  background: var(--cinnabar);
+  box-shadow: 0 0 0 5px rgba(34, 33, 30, 0.14);
+}
+
+/* 悬停墨点时上方极简提示画名 */
+.ink-dot-btn::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: 2px 8px;
+  font-family: var(--font-calligraphy);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--ink-charcoal);
+  background: radial-gradient(ellipse at center, rgba(243, 242, 237, 0.94) 55%, transparent 100%);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.ink-dot-btn:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-8px);
+}
+
+@media (max-width: 720px) {
+  .stage-nav-btn {
+    width: 28px;
+    font-size: 28px;
+  }
+  .portrait-canvas {
+    max-height: calc(100vh - 245px);
+    max-width: 80vw;
+  }
+  .ink-dot-matrix {
+    gap: 12px;
+  }
+}
 
 /* 无边框水墨凌空题字（替代生硬气泡） */
 .speech-bubble {
