@@ -17,9 +17,9 @@ window.INK_PAINTINGS = [
     idleSrc: "assets/paintings/01_pomo_waxian.png",
     activeSrc: "assets/paintings/01_pomo_waxian_active.png",
     originalSrc: "assets/originals/01_original.jpg",
-    // 画幅展示尺寸与横纵比（放大主体、减少留白）
+    // 画幅展示尺寸与横纵比（严格对齐 768x1376 原图比例，零拉伸失真）
     displayWidth: 330,
-    displayHeight: 578,
+    displayHeight: 591,
     // 局部网格动态热区（确保上方题跋、朱印与底部衣角绝对静止）
     motion: {
       style: "belly-laugh",
@@ -51,7 +51,7 @@ window.INK_PAINTINGS = [
     idleSrc: "assets/paintings/02_qinglian_wayin.png",
     activeSrc: "assets/paintings/02_qinglian_wayin_active.png",
     originalSrc: "assets/originals/02_original.jpg",
-    displayWidth: 250,
+    displayWidth: 335,
     displayHeight: 600,
     motion: {
       style: "sway-chant",
@@ -83,7 +83,7 @@ window.INK_PAINTINGS = [
     idleSrc: "assets/paintings/03_yituan_waqi.png",
     activeSrc: "assets/paintings/03_yituan_waqi_active.png",
     originalSrc: "assets/originals/03_original.jpg",
-    displayWidth: 375,
+    displayWidth: 378,
     displayHeight: 506,
     motion: {
       style: "hug-laugh",
@@ -115,7 +115,7 @@ window.INK_PAINTINGS = [
     idleSrc: "assets/paintings/04_qiufeng_wanshan.png",
     activeSrc: "assets/paintings/04_qiufeng_wanshan_active.png",
     originalSrc: "assets/originals/04_original.jpg",
-    displayWidth: 310,
+    displayWidth: 335,
     displayHeight: 600,
     motion: {
       style: "sad-sob",
@@ -148,7 +148,7 @@ window.INK_PAINTINGS = [
     activeSrc: "assets/paintings/05_guchan_tiaoxin_active.png",
     originalSrc: "assets/originals/05_original.jpg",
     isLandscape: true,
-    displayWidth: 490,
+    displayWidth: 498,
     displayHeight: 278,
     motion: {
       style: "zen-chuckle",
@@ -180,7 +180,7 @@ window.INK_PAINTINGS = [
     idleSrc: "assets/paintings/06_bochen_wagong.png",
     activeSrc: "assets/paintings/06_bochen_wagong_active.png",
     originalSrc: "assets/originals/06_original.jpg",
-    displayWidth: 292,
+    displayWidth: 332,
     displayHeight: 595,
     motion: {
       style: "head-tilt",
