@@ -1,0 +1,802 @@
+/* ==========================================================================
+   《墨韵蛙影 · 丹青幻境》极简东方水墨美学样式系统
+   ========================================================================== */
+
+:root {
+  /* 古宣纸与水墨五色 */
+  --paper-light: #f4eee1;
+  --paper-base: #ece3d2;
+  --paper-aged: #e0d4be;
+  --silk-mount: #d6ceb9;
+  --silk-inner: #c6bc9f;
+
+  --ink-charcoal: #151412;
+  --ink-dense: #272521;
+  --ink-medium: #524d43;
+  --ink-light: #80796c;
+  --ink-wash: #b6ae9d;
+
+  --cinnabar: #a62b21;
+  --cinnabar-soft: rgba(166, 43, 33, 0.14);
+  --rosewood: #3d281e;
+  --rosewood-dark: #21140e;
+
+  --font-serif: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --font-calligraphy: "KaiTi", "STKaiti", "BiauKai", "Noto Serif SC", serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--paper-base);
+  color: var(--ink-dense);
+  font-family: var(--font-serif);
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--cinnabar-soft);
+}
+
+.svg-filters-hidden {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* 细微生宣纸纤维纹理 */
+.paper-grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(circle at 18% 24%, rgba(112, 95, 68, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 82% 76%, rgba(95, 80, 56, 0.09) 0%, transparent 50%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(55, 45, 32, 0.012) 0px,
+      rgba(55, 45, 32, 0.012) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+}
+
+/* 底层水墨远山与烟云画布 */
+#inkWashBgCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 前景毛笔飞白与生宣渗墨画布 */
+#inkCursorCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 60;
+}
+
+/* ==========================================================================
+   极简无边框顶部天头：书法馆名 + 两枚古法闲章
+   ========================================================================== */
+.gallery-header {
+  position: relative;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 44px 10px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.seal-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 3px;
+  background-color: var(--cinnabar);
+  color: var(--paper-light);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  padding: 2px;
+  font-family: var(--font-calligraphy);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.05;
+  filter: url(#ink-bleed-edge);
+  user-select: none;
+  box-shadow: 0 3px 12px rgba(166, 43, 33, 0.22);
+}
+
+.seal-logo span {
+  writing-mode: vertical-rl;
+}
+
+.site-title {
+  margin: 0;
+  font-family: var(--font-calligraphy);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: var(--ink-charcoal);
+}
+
+.site-subtitle {
+  margin: 3px 0 0;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--ink-light);
+}
+
+/* 纯净无外框篆刻闲章按钮 */
+.header-seals {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.seal-trigger {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.seal-trigger:hover {
+  transform: translateY(-2px) scale(1.06);
+}
+
+.seal-trigger:active {
+  transform: scale(0.95);
+}
+
+.seal-wash-ring {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(35, 32, 28, 0.22) 0%, rgba(35, 32, 28, 0.08) 55%, transparent 74%);
+  transform: scale(0.4);
+  opacity: 0;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease;
+  filter: url(#ink-bleed-edge);
+  pointer-events: none;
+}
+
+.seal-trigger:hover .seal-wash-ring {
+  transform: scale(1.35);
+  opacity: 1;
+}
+
+.seal-glyph {
+  position: relative;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-calligraphy);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  filter: url(#ink-bleed-edge);
+  transition: all 0.3s ease;
+}
+
+/* 朱文方印「喚蛙」 */
+.seal-vermilion .seal-glyph {
+  color: var(--cinnabar);
+  border: 2px solid var(--cinnabar);
+  border-radius: 4px;
+  background: rgba(166, 43, 33, 0.04);
+}
+
+.seal-vermilion:hover .seal-glyph {
+  background: var(--cinnabar);
+  color: var(--paper-light);
+}
+
+.seal-vermilion .seal-wash-ring {
+  background: radial-gradient(circle, rgba(166, 43, 33, 0.22) 0%, rgba(166, 43, 33, 0.06) 55%, transparent 74%);
+}
+
+/* 白文圆印「聽音」 */
+.seal-ink-round .seal-glyph {
+  color: var(--ink-dense);
+  border: 1.8px solid var(--ink-medium);
+  border-radius: 50%;
+  background: rgba(39, 37, 33, 0.04);
+}
+
+.seal-ink-round.is-on .seal-glyph {
+  background: var(--ink-dense);
+  color: var(--paper-light);
+  border-color: var(--ink-charcoal);
+}
+
+/* ==========================================================================
+   凌空敕令水墨浮字横幅（无边框背景）
+   ========================================================================== */
+.call-banner {
+  position: fixed;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  font-family: var(--font-calligraphy);
+  font-size: 20px;
+  letter-spacing: 4px;
+  color: var(--ink-charcoal);
+  text-shadow: 0 0 18px rgba(244, 238, 225, 0.96), 0 0 6px rgba(244, 238, 225, 0.9);
+  padding: 6px 26px;
+  background: radial-gradient(ellipse at center, rgba(244, 238, 225, 0.92) 45%, transparent 100%);
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+}
+
+.call-banner.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ==========================================================================
+   画廊展厅：留白错落雅集布局（去尽多余框线）
+   ========================================================================== */
+.gallery-stage {
+  position: relative;
+  z-index: 10;
+  padding: 16px 40px 44px;
+  max-width: 1580px;
+  margin: 0 auto;
+}
+
+.gallery-track {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  align-items: end;
+  justify-items: center;
+  gap: 56px 36px;
+  padding: 14px 8px 28px;
+}
+
+/* ==========================================================================
+   宋式绫裱画轴与水墨光晕（Ink Aura）
+   ========================================================================== */
+.scroll-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-card:hover {
+  transform: translateY(-5px);
+}
+
+/* 画轴背后的轻盈生宣淡墨光晕（清雅不阴森） */
+.ink-aura {
+  position: absolute;
+  top: 6%;
+  left: -14%;
+  right: -14%;
+  bottom: 12%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(68, 60, 48, 0.13) 0%,
+    rgba(92, 84, 70, 0.06) 46%,
+    transparent 74%
+  );
+  filter: url(#ink-wash-heavy);
+  opacity: 0;
+  transform: scale(0.76);
+  transition: opacity 0.7s ease, transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.scroll-card:hover .ink-aura,
+.scroll-card.is-active .ink-aura {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+/* 挂绳与天杆 */
+.scroll-hanger {
+  width: 58%;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.scroll-hanger::before {
+  content: "";
+  width: 66%;
+  height: 20px;
+  border-top: 1.5px solid rgba(72, 66, 56, 0.5);
+  border-left: 1.5px solid rgba(72, 66, 56, 0.4);
+  border-right: 1.5px solid rgba(72, 66, 56, 0.4);
+  transform: perspective(120px) rotateX(22deg);
+}
+
+.scroll-top-rod {
+  width: calc(100% + 12px);
+  height: 8px;
+  background: linear-gradient(180deg, #543728 0%, var(--rosewood-dark) 100%);
+  border-radius: 4px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.24);
+}
+
+/* 绫绢装裱边框 */
+.scroll-silk-body {
+  position: relative;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%, rgba(0, 0, 0, 0.08) 100%),
+    repeating-linear-gradient(45deg, rgba(90, 82, 66, 0.035) 0px, rgba(90, 82, 66, 0.035) 2px, transparent 2px, transparent 8px),
+    var(--silk-mount);
+  padding: 22px 15px 24px;
+  border-left: 1px solid rgba(60, 50, 35, 0.22);
+  border-right: 1px solid rgba(60, 50, 35, 0.22);
+  box-shadow:
+    0 20px 42px -14px rgba(24, 20, 14, 0.36),
+    inset 0 0 18px rgba(70, 58, 40, 0.14);
+}
+
+.scroll-silk-body::before,
+.scroll-silk-body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 13px;
+  height: 18px;
+  background: linear-gradient(180deg, #b8ad94 0%, #9b8e73 100%);
+  border-left: 1px solid rgba(70, 58, 40, 0.2);
+  border-right: 1px solid rgba(70, 58, 40, 0.2);
+  opacity: 0.7;
+}
+.scroll-silk-body::before { left: 26%; }
+.scroll-silk-body::after  { right: 26%; }
+
+.canvas-bezel {
+  position: relative;
+  padding: 4px;
+  background: var(--silk-inner);
+  border: 1px solid rgba(60, 50, 35, 0.28);
+  box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.22);
+}
+
+.portrait-canvas {
+  display: block;
+  cursor: pointer;
+  background: #9f8c6c;
+}
+
+.scroll-bottom-rod {
+  position: relative;
+  width: calc(100% + 34px);
+  height: 14px;
+  background: linear-gradient(180deg, #5e3f2e 0%, var(--rosewood) 45%, var(--rosewood-dark) 100%);
+  border-radius: 7px;
+  box-shadow: 0 7px 14px rgba(20, 16, 12, 0.32);
+}
+
+.scroll-bottom-rod::before,
+.scroll-bottom-rod::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  width: 13px;
+  height: 16px;
+  background: radial-gradient(circle at 35% 35%, #d9c9a8 0%, #8f7e5c 70%, #5e5038 100%);
+  border-radius: 3px;
+}
+.scroll-bottom-rod::before { left: -4px; }
+.scroll-bottom-rod::after  { right: -4px; }
+
+/* 无边框水墨凌空题字（替代生硬气泡） */
+.speech-bubble {
+  position: absolute;
+  top: 8px;
+  right: -18px;
+  max-width: 195px;
+  padding: 8px 14px;
+  background: radial-gradient(ellipse at center, rgba(244, 238, 225, 0.94) 55%, rgba(244, 238, 225, 0.45) 85%, transparent 100%);
+  font-family: var(--font-calligraphy);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-charcoal);
+  text-shadow: 0 1px 6px rgba(255, 252, 244, 0.9);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px) scale(0.95);
+  transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 15;
+}
+
+.scroll-card.is-speaking .speech-bubble {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* 去卡片化极简落款（直接书写于宣纸空白，无方框阴影） */
+.ink-caption {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.caption-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.caption-title {
+  margin: 0;
+  font-family: var(--font-calligraphy);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--ink-charcoal);
+}
+
+.seal-archive-mini {
+  padding: 1px 6px;
+  font-family: var(--font-calligraphy);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--cinnabar);
+  border: 1.2px solid var(--cinnabar);
+  border-radius: 2px;
+  background: transparent;
+  cursor: pointer;
+  filter: url(#ink-bleed-edge);
+  transition: all 0.25s ease;
+}
+
+.seal-archive-mini:hover {
+  background: var(--cinnabar);
+  color: var(--paper-light);
+}
+
+.caption-meta {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-light);
+  letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   跨画框串门流光
+   ========================================================================== */
+.visit-flight-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 55;
+}
+
+.flying-naiwa {
+  position: fixed;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--cinnabar);
+  box-shadow: 0 0 24px rgba(166, 43, 33, 0.42), 0 0 14px rgba(24, 20, 16, 0.45);
+  transform: translate(-50%, -50%);
+  filter: url(#ink-bleed-edge);
+}
+
+.flying-naiwa img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   丹青考据宣纸弹窗（水墨化）
+   ========================================================================== */
+.archive-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.archive-modal[hidden] {
+  display: none;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 18, 15, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+.modal-scroll-box {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  max-height: 90vh;
+  display: flex;
+  align-items: stretch;
+  z-index: 1;
+  animation: scrollUnroll 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes scrollUnroll {
+  from {
+    opacity: 0;
+    transform: scaleX(0.3) scaleY(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1) scaleY(1);
+  }
+}
+
+.scroll-roller {
+  width: 16px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #322017 0%, #5b3c2c 45%, #23150e 100%);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: relative;
+  flex: 1;
+  background:
+    radial-gradient(circle at top right, rgba(166, 43, 33, 0.05), transparent 45%),
+    var(--paper-light);
+  border-top: 2px solid var(--rosewood);
+  border-bottom: 2px solid var(--rosewood);
+  padding: 26px 32px;
+  overflow-y: auto;
+  box-shadow: inset 0 0 36px rgba(105, 86, 56, 0.14);
+}
+
+.modal-close-seal {
+  position: sticky;
+  top: 0;
+  float: right;
+  z-index: 5;
+  padding: 3px 10px;
+  border: 1.5px solid var(--cinnabar);
+  background: var(--paper-light);
+  color: var(--cinnabar);
+  font-family: var(--font-calligraphy);
+  font-size: 14px;
+  letter-spacing: 2px;
+  border-radius: 2px;
+  cursor: pointer;
+  filter: url(#ink-bleed-edge);
+  transition: all 0.2s ease;
+}
+
+.modal-close-seal:hover {
+  background: var(--cinnabar);
+  color: var(--paper-light);
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 1.25fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.modal-visual-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.compare-tabs {
+  display: flex;
+  gap: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed rgba(77, 73, 64, 0.25);
+}
+
+.compare-tab {
+  padding: 4px 4px;
+  font-family: var(--font-calligraphy);
+  font-size: 15px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.compare-tab.is-active {
+  color: var(--cinnabar);
+  border-bottom-color: var(--cinnabar);
+  font-weight: 700;
+}
+
+.compare-stage {
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.compare-stage img {
+  max-width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  box-shadow: 0 8px 24px rgba(20, 16, 12, 0.22);
+}
+
+.compare-caption {
+  font-size: 12px;
+  color: var(--ink-medium);
+  text-align: center;
+}
+
+.modal-info-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-seals-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.badge-seal {
+  padding: 1px 7px;
+  background: var(--cinnabar);
+  color: var(--paper-light);
+  font-size: 12px;
+  border-radius: 2px;
+  font-family: var(--font-calligraphy);
+}
+
+.badge-ink {
+  padding: 1px 7px;
+  border: 1px solid var(--ink-medium);
+  color: var(--ink-dense);
+  font-size: 12px;
+  border-radius: 2px;
+}
+
+.modal-painting-title {
+  margin: 0;
+  font-family: var(--font-calligraphy);
+  font-size: 26px;
+  letter-spacing: 3px;
+  color: var(--ink-charcoal);
+}
+
+.modal-original-sub {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--ink-medium);
+}
+
+.archive-meta-lines {
+  font-size: 12.5px;
+  color: var(--ink-medium);
+  line-height: 1.7;
+  padding-left: 10px;
+  border-left: 2px solid var(--cinnabar);
+}
+
+.archive-meta-lines p {
+  margin: 0;
+}
+
+.archive-section h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-family: var(--font-calligraphy);
+  letter-spacing: 1.5px;
+  color: var(--cinnabar);
+}
+
+.archive-section p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--ink-dense);
+}
+
+.inscription-quote {
+  margin: 0;
+  padding: 6px 12px;
+  border-left: 2px dashed rgba(77, 73, 64, 0.32);
+  font-family: var(--font-calligraphy);
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: var(--ink-charcoal);
+}
+
+.seal-trigger-inline {
+  padding: 5px 16px;
+  font-family: var(--font-calligraphy);
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: var(--cinnabar);
+  background: transparent;
+  border: 1.5px solid var(--cinnabar);
+  border-radius: 2px;
+  cursor: pointer;
+  filter: url(#ink-bleed-edge);
+  transition: all 0.25s ease;
+}
+
+.seal-trigger-inline:hover {
+  background: var(--cinnabar);
+  color: var(--paper-light);
+}
+
+/* 底部落款 */
+.gallery-footer {
+  position: relative;
+  z-index: 10;
+  padding: 8px 32px 26px;
+  text-align: center;
+}
+
+.footer-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-light);
+  letter-spacing: 1px;
+}
+
+@media (max-width: 820px) {
+  .gallery-header {
+    padding: 16px 20px 8px;
+  }
+  .gallery-stage {
+    padding: 12px 16px 28px;
+  }
+  .modal-grid {
+    grid-template-columns: 1fr;
+  }
+}

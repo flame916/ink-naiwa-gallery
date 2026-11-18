@@ -1,0 +1,8 @@
+# 本地调研参考原图（网页不直接引用）
+assets/memes/
+
+# 系统与编辑器临时文件
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log

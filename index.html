@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>墨韵蛙影 · 丹青幻境</title>
+  <link rel="stylesheet" href="styles/ink-theme.css" />
+</head>
+<body>
+  <!-- SVG 水墨置换与毛边渗墨滤镜 -->
+  <svg class="svg-filters-hidden" aria-hidden="true">
+    <defs>
+      <filter id="ink-bleed-edge" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.2" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+      <filter id="ink-wash-heavy" x="-30%" y="-30%" width="160%" height="160%">
+        <feTurbulence type="turbulence" baseFrequency="0.018" numOctaves="4" result="turb" />
+        <feDisplacementMap in="SourceGraphic" in2="turb" scale="28" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- 宣纸纹理与水墨山水云烟动态背景 -->
+  <div class="paper-grain-overlay" aria-hidden="true"></div>
+  <canvas id="inkWashBgCanvas" aria-hidden="true"></canvas>
+  <canvas id="inkCursorCanvas" aria-hidden="true"></canvas>
+
+  <!-- 极简水墨天头：仅留题额与两枚古法闲章 -->
+  <header class="gallery-header">
+    <div class="header-brand">
+      <div class="seal-logo" title="墨韵蛙影馆印">
+        <span>墨韻</span>
+        <span>蛙影</span>
+      </div>
+      <div class="brand-titles">
+        <h1 class="site-title">墨韵蛙影</h1>
+        <p class="site-subtitle">传世丹青 · 奶蛙幻境 · 游标所至画中生</p>
+      </div>
+    </div>
+
+    <nav class="header-seals" aria-label="画廊闲章控制">
+      <button id="btnCallFamily" type="button" class="seal-trigger seal-vermilion" title="全网呼叫奶家人 · 唤醒群蛙共笑并跨框串门">
+        <span class="seal-wash-ring"></span>
+        <span class="seal-glyph">喚蛙</span>
+      </button>
+
+      <button id="btnAudioMode" type="button" class="seal-trigger seal-ink-round" title="点击切换古琴雅韵、奶蛙魔音或静默">
+        <span class="seal-wash-ring"></span>
+        <span class="seal-glyph" id="audioLabel">聽音</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- 水墨浮卷敕令横幅 -->
+  <div id="bannerScroll" class="call-banner" aria-live="polite">
+    <span id="bannerText">全网呼叫奶家人——每日来上这么两下，浑身都通透了！</span>
+  </div>
+
+  <!-- 极简留白展厅（无方框、无说明条） -->
+  <main class="gallery-stage">
+    <section id="galleryTrack" class="gallery-track" aria-label="六大传世水墨奶蛙动态画轴">
+      <!-- 由 app.js 动态渲染 6 幅水墨装裱画轴 -->
+    </section>
+
+    <!-- 跨框串门水墨流光层 -->
+    <div id="visitFlightLayer" class="visit-flight-layer" aria-hidden="true"></div>
+  </main>
+
+  <!-- 底部极简落款 -->
+  <footer class="gallery-footer">
+    <p class="footer-note">
+      台北故宫博物院 · 北京故宫博物院 · 上海博物馆 · 浙江省博物馆 · 东京国立博物馆 馆藏真迹考据 · 游标轻拂即动，点印「考據」可勘原画
+    </p>
+  </footer>
+
+  <!-- 丹青考据宣纸展开弹窗 -->
+  <div id="archiveModal" class="archive-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-scroll-box">
+      <div class="scroll-roller roller-left" aria-hidden="true"></div>
+      <div class="scroll-roller roller-right" aria-hidden="true"></div>
+
+      <div class="modal-content">
+        <button id="btnCloseModal" type="button" class="modal-close-seal" title="合上考据卷轴">合卷</button>
+
+        <div class="modal-grid">
+          <div class="modal-visual-pane">
+            <div class="compare-tabs" role="tablist" aria-label="原画与奶蛙对比视图">
+              <button type="button" class="compare-tab is-active" data-view="original">原画真迹</button>
+              <button type="button" class="compare-tab" data-view="idle">奶蛙静谧</button>
+              <button type="button" class="compare-tab" data-view="active">奶蛙动容</button>
+            </div>
+
+            <div class="compare-stage">
+              <img id="modalCompareImg" src="" alt="画作对比大图" />
+              <div id="modalCompareCaption" class="compare-caption"></div>
+            </div>
+          </div>
+
+          <div class="modal-info-pane">
+            <div class="modal-header-block">
+              <div class="modal-seals-row">
+                <span id="modalDynastyBadge" class="badge-seal">南宋</span>
+                <span id="modalMuseumBadge" class="badge-ink">台北故宫博物院藏</span>
+              </div>
+              <h2 id="modalTitle" class="modal-painting-title">《泼墨蛙仙图》</h2>
+              <p id="modalOriginalRef" class="modal-original-sub">原画基准：《泼墨仙人图》 · 梁楷 绘</p>
+            </div>
+
+            <div class="archive-meta-lines">
+              <p><span>形制：</span><strong id="modalDimensions"></strong></p>
+              <p><span>迷因：</span><strong id="modalMemeRef"></strong></p>
+            </div>
+
+            <div class="archive-section">
+              <h3>笔墨考据</h3>
+              <p id="modalTechnique"></p>
+            </div>
+
+            <div class="archive-section">
+              <h3>题跋印鉴</h3>
+              <blockquote id="modalInscription" class="inscription-quote"></blockquote>
+            </div>
+
+            <div class="archive-section">
+              <h3>入画动态</h3>
+              <p id="modalActionDesc"></p>
+            </div>
+
+            <div class="modal-footer-actions">
+              <button id="btnModalTrigger" type="button" class="seal-trigger-inline">唤起此蛙一动</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts/paintings-data.js"></script>
+  <script src="scripts/ink-audio.js"></script>
+  <script src="scripts/ink-cursor.js"></script>
+  <script src="scripts/portrait-engine.js"></script>
+  <script src="scripts/app.js"></script>
+</body>
+</html>
