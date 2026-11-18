@@ -72,12 +72,12 @@
   window.addEventListener("resize", resize);
   resize();
 
-  // 绘制三层连绵起伏宋画水墨远山
+  // 绘制三层连绵起伏宋画水墨远山（浓淡墨韵层次）
   function drawDistantMountains(ctx, timeSec) {
     const layers = [
-      { baseY: 0.72, amp: 55, freq: 0.0032, drift: timeSec * 4, color: "rgba(62, 57, 48, 0.055)", bottomFade: 0.96 },
-      { baseY: 0.80, amp: 42, freq: 0.0046, drift: -timeSec * 6, color: "rgba(44, 40, 34, 0.075)", bottomFade: 0.99 },
-      { baseY: 0.88, amp: 30, freq: 0.0062, drift: timeSec * 3, color: "rgba(30, 27, 23, 0.09)", bottomFade: 1.0 }
+      { baseY: 0.68, amp: 65, freq: 0.0030, drift: timeSec * 4, color: "rgba(38, 37, 34, 0.085)" },
+      { baseY: 0.78, amp: 48, freq: 0.0044, drift: -timeSec * 6, color: "rgba(28, 27, 25, 0.115)" },
+      { baseY: 0.87, amp: 34, freq: 0.0060, drift: timeSec * 3, color: "rgba(18, 17, 15, 0.145)" }
     ];
 
     layers.forEach((layer, idx) => {
@@ -96,12 +96,45 @@
 
       const grad = ctx.createLinearGradient(0, y0 - layer.amp, 0, height);
       grad.addColorStop(0, layer.color);
-      grad.addColorStop(0.65, layer.color);
-      grad.addColorStop(1, "rgba(236, 227, 210, 0)");
+      grad.addColorStop(0.68, layer.color);
+      grad.addColorStop(1, "rgba(231, 229, 221, 0)");
       ctx.fillStyle = grad;
       ctx.fill();
       ctx.restore();
     });
+  }
+
+  // 角落写意水墨竹影（烘托纯水墨画卷质感，不遮挡画作主体）
+  function drawInkBambooCorner(ctx, timeSec) {
+    const sway = Math.sin(timeSec * 0.7) * 4;
+    ctx.save();
+    ctx.strokeStyle = "rgba(26, 25, 23, 0.12)";
+    ctx.fillStyle = "rgba(26, 25, 23, 0.11)";
+    ctx.lineCap = "round";
+
+    // 右下角斜出竹枝
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(width + 10, height - 40);
+    ctx.quadraticCurveTo(width - 70, height - 130, width - 130 + sway, height - 220);
+    ctx.stroke();
+
+    const leaves = [
+      [width - 92 + sway * 0.5, height - 160, -0.6],
+      [width - 108 + sway * 0.6, height - 175, -1.1],
+      [width - 125 + sway * 0.8, height - 210, -0.4],
+      [width - 114 + sway * 0.8, height - 225, -1.4]
+    ];
+    leaves.forEach(([lx, ly, ang]) => {
+      ctx.save();
+      ctx.translate(lx, ly);
+      ctx.rotate(ang);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 22, 4.2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+    ctx.restore();
   }
 
   function renderBg(timeSec) {
@@ -109,15 +142,16 @@
     bgCtx.clearRect(0, 0, width, height);
 
     drawDistantMountains(bgCtx, timeSec);
+    drawInkBambooCorner(bgCtx, timeSec);
 
     // 缓慢流动的水墨云烟团
     clouds.forEach((c) => {
       const cx = ((c.xFrac + timeSec * c.speed) % 1.3 - 0.15) * width;
       const cy = c.yFrac * height + Math.sin(timeSec * 0.4 + c.phase) * 18;
       const grad = bgCtx.createRadialGradient(cx, cy, 10, cx, cy, c.rx);
-      grad.addColorStop(0, `rgba(42, 38, 32, ${c.alpha})`);
-      grad.addColorStop(0.55, `rgba(68, 62, 52, ${c.alpha * 0.45})`);
-      grad.addColorStop(1, "rgba(68, 62, 52, 0)");
+      grad.addColorStop(0, `rgba(28, 27, 24, ${c.alpha * 1.6})`);
+      grad.addColorStop(0.55, `rgba(48, 46, 42, ${c.alpha * 0.7})`);
+      grad.addColorStop(1, "rgba(48, 46, 42, 0)");
 
       bgCtx.save();
       bgCtx.translate(cx, cy);
