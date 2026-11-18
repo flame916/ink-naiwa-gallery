@@ -157,9 +157,10 @@ class LivingPortrait {
     const lookX = Math.max(-1, Math.min(1, (this.globalMouse.x - (rect.left + rect.width * 0.5)) / 420));
     const lookY = Math.max(-1, Math.min(1, (this.globalMouse.y - (rect.top + rect.height * 0.4)) / 420));
 
-    const breath = Math.sin(timeSec * 1.8 + this.phaseSeed);
-    const activeAmp = this.morph * 0.88 + this.pokeBoost * 1.25;
-    const freq = m.laughFreq;
+    const breath = Math.sin(timeSec * 1.4 + this.phaseSeed);
+    const easedMorph = this.smoothstep(0, 1, this.morph);
+    const activeAmp = easedMorph * 0.72 + this.pokeBoost * 0.85;
+    const freq = m.laughFreq * 0.42; // 舒缓节拍，告别高频电子抖动
 
     ctx.save();
     ctx.globalAlpha = alpha;
@@ -220,11 +221,13 @@ class LivingPortrait {
     const isActiveTarget = this.hovered || isForced;
 
     const targetMorph = isActiveTarget ? 1 : 0;
-    const rate = targetMorph > this.morph ? 4.8 : 2.9;
+    // 缓慢、从容地演变至表情包状态（约 1.4~1.8 秒自然过渡）
+    const rate = targetMorph > this.morph ? 1.35 : 1.05;
     this.morph += (targetMorph - this.morph) * Math.min(1, dt * rate);
-    this.pokeBoost = Math.max(0, this.pokeBoost - dt * 1.25);
+    this.pokeBoost = Math.max(0, this.pokeBoost - dt * 0.9);
 
-    const isActuallyMoving = this.morph > 0.35;
+    const easedMorph = this.smoothstep(0, 1, this.morph);
+    const isActuallyMoving = easedMorph > 0.28;
     this.cardEl.classList.toggle("is-active", isActuallyMoving);
     this.cardEl.classList.toggle("is-speaking", isActuallyMoving || (this.visitor && nowMs < this.visitor.until));
 
@@ -251,8 +254,8 @@ class LivingPortrait {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.w, this.h);
     ctx.drawImage(this.offIdle, 0, 0);
-    this.drawWarpedImage(this.offIdle, 1 - this.morph * 0.92, timeSec);
-    this.drawWarpedImage(this.offActive, this.morph, timeSec);
+    this.drawWarpedImage(this.offIdle, 1 - easedMorph * 0.94, timeSec);
+    this.drawWarpedImage(this.offActive, easedMorph, timeSec);
 
     if (this.visitor) {
       if (nowMs >= this.visitor.until) {

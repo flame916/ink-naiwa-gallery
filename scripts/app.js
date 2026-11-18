@@ -300,13 +300,20 @@
   }
 
   let lastFrame = 0;
+  const TARGET_FRAME_MS = 1000 / 16; // 16 FPS 传统手绘定格动画韵律，使演变从容自然
   function tick(now) {
     if (!lastFrame) lastFrame = now;
-    const dt = Math.min(0.05, (now - lastFrame) / 1000);
-    lastFrame = now;
+    const elapsed = now - lastFrame;
+    if (elapsed >= TARGET_FRAME_MS) {
+      const dt = Math.min(0.12, elapsed / 1000);
+      lastFrame = now - (elapsed % TARGET_FRAME_MS);
 
-    for (let i = 0; i < portraits.length; i++) {
-      portraits[i].update(dt, now);
+      for (let i = 0; i < portraits.length; i++) {
+        // 仅渲染当前焦点画作或仍在退场过渡中的画作
+        if (i === activeIndex || portraits[i].morph > 0.01) {
+          portraits[i].update(dt, now);
+        }
+      }
     }
     requestAnimationFrame(tick);
   }
