@@ -216,13 +216,7 @@
     if (!bgCtx) return;
     bgCtx.clearRect(0, 0, width, height);
 
-    drawDistantMountains(bgCtx, timeSec);
-    drawWaterRipples(bgCtx, timeSec);
-    drawInkPineBranch(bgCtx, timeSec);
-    drawInkBambooCorner(bgCtx, timeSec);
-    drawInkBirds(bgCtx, timeSec);
-
-    // 缓慢流动的水墨云烟团
+    // 缓慢流动的水墨云烟团（不绘制程序化几何线条，由手绘真迹图层提供山水与竹石）
     clouds.forEach((c) => {
       const cx = ((c.xFrac + timeSec * c.speed) % 1.3 - 0.15) * width;
       const cy = c.yFrac * height + Math.sin(timeSec * 0.4 + c.phase) * 18;

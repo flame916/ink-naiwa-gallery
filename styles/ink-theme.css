@@ -69,14 +69,63 @@ html, body {
     );
 }
 
-/* 底层水墨远山与烟云画布 */
+/* 底层水墨手绘山水背景层（非程序图，轻微呼吸晃动） */
+.ink-painted-bg {
+  position: fixed;
+  inset: -4%;
+  width: 108%;
+  height: 108%;
+  pointer-events: none;
+  z-index: 2;
+  background-image: url("../assets/bg/ink_bg_landscape.png");
+  background-position: center bottom;
+  background-size: cover;
+  background-repeat: no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.72;
+  animation: inkDriftSlow 20s ease-in-out infinite alternate;
+}
+
+.ink-painted-fg {
+  position: fixed;
+  right: -2%;
+  bottom: -2%;
+  width: 34vw;
+  min-width: 240px;
+  max-width: 460px;
+  height: 76vh;
+  pointer-events: none;
+  z-index: 3;
+  background-image: url("../assets/bg/ink_fg_bamboo.png");
+  background-position: right bottom;
+  background-size: contain;
+  background-repeat: no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.42;
+  transform-origin: bottom right;
+  animation: inkSwayGentle 11s ease-in-out infinite alternate;
+}
+
+@keyframes inkDriftSlow {
+  0%   { transform: translate3d(-0.8%, 0.4%, 0) scale(1.01); }
+  50%  { transform: translate3d(0.6%, -0.5%, 0) scale(1.025); }
+  100% { transform: translate3d(1.0%, 0.3%, 0) scale(1.015); }
+}
+
+@keyframes inkSwayGentle {
+  0%   { transform: translate3d(0, 0, 0) rotate(-0.35deg) scale(1.01); }
+  50%  { transform: translate3d(0.45%, -0.35%, 0) rotate(0.25deg) scale(1.02); }
+  100% { transform: translate3d(-0.35%, 0.3%, 0) rotate(0.4deg) scale(1.015); }
+}
+
+/* 底层水墨流动烟云与触发墨晕画布 */
 #inkWashBgCanvas {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 2;
+  z-index: 4;
 }
 
 /* 前景毛笔飞白与生宣渗墨画布 */
@@ -209,21 +258,21 @@ html, body {
   transition: all 0.3s ease;
 }
 
-/* 朱文方印「喚蛙」 */
+/* 黑白水墨方印「喚蛙」（去红以黑白水墨为主） */
 .seal-vermilion .seal-glyph {
-  color: var(--cinnabar);
-  border: 2px solid var(--cinnabar);
-  border-radius: 4px;
-  background: rgba(166, 43, 33, 0.04);
+  color: var(--ink-charcoal);
+  border: 1.8px solid var(--ink-dense);
+  border-radius: 3px;
+  background: rgba(18, 18, 16, 0.04);
 }
 
 .seal-vermilion:hover .seal-glyph {
-  background: var(--cinnabar);
+  background: var(--ink-charcoal);
   color: var(--paper-light);
 }
 
 .seal-vermilion .seal-wash-ring {
-  background: radial-gradient(circle, rgba(166, 43, 33, 0.22) 0%, rgba(166, 43, 33, 0.06) 55%, transparent 74%);
+  background: radial-gradient(circle, rgba(24, 23, 20, 0.22) 0%, rgba(24, 23, 20, 0.06) 55%, transparent 74%);
 }
 
 /* 白文圆印「聽音」 */
@@ -461,8 +510,8 @@ html, body {
 .ink-dot-btn.is-active .ink-dot-core {
   width: 13px;
   height: 13px;
-  background: var(--cinnabar);
-  box-shadow: 0 0 0 5px rgba(34, 33, 30, 0.14);
+  background: var(--ink-charcoal);
+  box-shadow: 0 0 0 5px rgba(24, 23, 20, 0.16), 0 0 10px rgba(24, 23, 20, 0.22);
 }
 
 /* 悬停墨点时上方极简提示画名 */
@@ -554,12 +603,12 @@ html, body {
 }
 
 .seal-archive-mini {
-  padding: 1px 6px;
+  padding: 1px 7px;
   font-family: var(--font-calligraphy);
   font-size: 12px;
   letter-spacing: 1px;
-  color: var(--cinnabar);
-  border: 1.2px solid var(--cinnabar);
+  color: var(--ink-medium);
+  border: 1.2px solid rgba(34, 33, 30, 0.42);
   border-radius: 2px;
   background: transparent;
   cursor: pointer;
@@ -568,7 +617,8 @@ html, body {
 }
 
 .seal-archive-mini:hover {
-  background: var(--cinnabar);
+  background: var(--ink-dense);
+  border-color: var(--ink-dense);
   color: var(--paper-light);
 }
 
