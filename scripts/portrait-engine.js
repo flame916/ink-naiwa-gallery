@@ -231,12 +231,17 @@ class LivingPortrait {
     const isActiveTarget = this.hovered || isForced;
 
     const targetMorph = isActiveTarget ? 1 : 0;
-    // 缓慢、从容地演变至表情包状态（约 1.4~1.8 秒自然过渡）
-    const rate = targetMorph > this.morph ? 1.35 : 1.05;
+    // 从容顺滑过渡（约 0.95 秒）配合水墨烟岚掩映重影
+    const rate = targetMorph > this.morph ? 1.95 : 1.45;
     this.morph += (targetMorph - this.morph) * Math.min(1, dt * rate);
-    this.pokeBoost = Math.max(0, this.pokeBoost - dt * 0.9);
+    this.pokeBoost = Math.max(0, this.pokeBoost - dt * 1.0);
 
     const easedMorph = this.smoothstep(0, 1, this.morph);
+    // 重影高发区（0.15~0.85）使用钟形水墨薄雾掩护，并压缩中段停留时间
+    const midPulse = Math.sin(easedMorph * Math.PI);
+    const blendT = easedMorph < 0.5
+      ? 0.5 * Math.pow(easedMorph * 2, 1.35)
+      : 1 - 0.5 * Math.pow((1 - easedMorph) * 2, 1.35);
     const isActuallyMoving = easedMorph > 0.28;
     this.cardEl.classList.toggle("is-active", isActuallyMoving);
     this.cardEl.classList.toggle("is-speaking", isActuallyMoving || (this.visitor && nowMs < this.visitor.until));
@@ -263,7 +268,7 @@ class LivingPortrait {
 
     const ctx = this.ctx;
     const totalSegs = this.frames.length - 1;
-    const scaled = easedMorph * totalSegs;
+    const scaled = blendT * totalSegs;
     const idxA = Math.min(totalSegs - 1, Math.floor(scaled));
     const idxB = idxA + 1;
     const localT = scaled - idxA;
@@ -273,8 +278,28 @@ class LivingPortrait {
 
     ctx.clearRect(0, 0, this.w, this.h);
     ctx.drawImage(frameA, 0, 0);
-    this.drawWarpedImage(frameA, 1 - localT * 0.92, timeSec);
+    this.drawWarpedImage(frameA, 1 - localT * 0.94, timeSec);
     this.drawWarpedImage(frameB, localT, timeSec);
+
+    // 切换瞬间在人物变化热区拂过一层极柔的「水墨烟岚薄纱」，自然掩去双态重叠重影
+    if (midPulse > 0.04) {
+      const m = this.data.motion;
+      const veilX = this.w * m.centerX;
+      const veilY = this.h * ((m.topKeep + m.bellyBottom) * 0.52);
+      const veilR = Math.min(this.w, this.h) * 0.44;
+      for (let k = 0; k < 3; k++) {
+        const ox = Math.sin(timeSec * 2.2 + k * 2.1) * 18;
+        const oy = Math.cos(timeSec * 1.8 + k * 1.7) * 12;
+        const grad = ctx.createRadialGradient(veilX + ox, veilY + oy, veilR * 0.1, veilX + ox, veilY + oy, veilR * (0.9 + k * 0.2));
+        grad.addColorStop(0, `rgba(235, 231, 222, ${midPulse * 0.24})`);
+        grad.addColorStop(0.55, `rgba(54, 50, 44, ${midPulse * 0.09})`);
+        grad.addColorStop(1, "rgba(235, 231, 222, 0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(veilX + ox, veilY + oy, veilR * (0.9 + k * 0.2), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
 
     if (this.visitor) {
       if (nowMs >= this.visitor.until) {

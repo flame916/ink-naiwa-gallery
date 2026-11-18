@@ -300,7 +300,7 @@
   }
 
   let lastFrame = 0;
-  const TARGET_FRAME_MS = 1000 / 16; // 16 FPS 传统手绘定格动画韵律，使演变从容自然
+  const TARGET_FRAME_MS = 1000 / 30; // 30 FPS 丝滑水墨烟岚过渡
   function tick(now) {
     if (!lastFrame) lastFrame = now;
     const elapsed = now - lastFrame;
