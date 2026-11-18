@@ -15,6 +15,10 @@ window.INK_PAINTINGS = [
     memeName: "捧腹大笑系列（dot-naiwa-0325）",
     memeUrl: "https://naiwahub.com/zh/memes/dot-naiwa-0325",
     idleSrc: "assets/paintings/01_pomo_waxian.png?v=5",
+    midFrames: [
+      "assets/paintings/01_pomo_waxian_mid1.png",
+      "assets/paintings/01_pomo_waxian_mid2.png"
+    ],
     activeSrc: "assets/paintings/01_pomo_waxian_active.png",
     originalSrc: "assets/originals/01_original.jpg",
     // 画幅展示尺寸与横纵比（严格对齐 768x1376 原图比例，零拉伸失真）
@@ -49,6 +53,9 @@ window.INK_PAINTINGS = [
     memeName: "开始快乐摇摆 GIF（naiwa-54）",
     memeUrl: "https://naiwahub.com/zh/memes/naiwa-54",
     idleSrc: "assets/paintings/02_qinglian_wayin.png",
+    midFrames: [
+      "assets/paintings/02_qinglian_wayin_mid1.png"
+    ],
     activeSrc: "assets/paintings/02_qinglian_wayin_active.png",
     originalSrc: "assets/originals/02_original.jpg",
     displayWidth: 335,

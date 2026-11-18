@@ -21,13 +21,23 @@ class LivingPortrait {
     this.canvas.style.width = `${data.displayWidth}px`;
     this.canvas.style.height = `${data.displayHeight}px`;
 
-    this.offIdle = document.createElement("canvas");
-    this.offActive = document.createElement("canvas");
-    this.offIdle.width = this.offActive.width = this.w;
-    this.offIdle.height = this.offActive.height = this.h;
+    // 支持多关键帧数组：[idle, mid1, mid2, ..., active]
+    const frameUrls = Array.isArray(data.midFrames) && data.midFrames.length
+      ? [data.idleSrc, ...data.midFrames, data.activeSrc]
+      : [data.idleSrc, data.activeSrc];
 
-    this.imgIdle = new Image();
-    this.imgActive = new Image();
+    this.frames = frameUrls.map((url) => {
+      const off = document.createElement("canvas");
+      off.width = this.w;
+      off.height = this.h;
+      const img = new Image();
+      return { url, off, img, loaded: false };
+    });
+
+    this.offIdle = this.frames[0].off;
+    this.offActive = this.frames[this.frames.length - 1].off;
+    this.imgIdle = this.frames[0].img;
+    this.imgActive = this.frames[this.frames.length - 1].img;
     this.readyCount = 0;
 
     this.hovered = false;
@@ -47,15 +57,15 @@ class LivingPortrait {
   }
 
   loadImages() {
-    const onDone = (img, offCanvas) => {
-      const octx = offCanvas.getContext("2d");
-      octx.drawImage(img, 0, 0, this.w, this.h);
-      this.readyCount++;
-    };
-    this.imgIdle.onload = () => onDone(this.imgIdle, this.offIdle);
-    this.imgActive.onload = () => onDone(this.imgActive, this.offActive);
-    this.imgIdle.src = this.data.idleSrc;
-    this.imgActive.src = this.data.activeSrc;
+    this.frames.forEach((f) => {
+      f.img.onload = () => {
+        const octx = f.off.getContext("2d");
+        octx.drawImage(f.img, 0, 0, this.w, this.h);
+        f.loaded = true;
+        this.readyCount++;
+      };
+      f.img.src = f.url;
+    });
   }
 
   bindEvents() {
@@ -214,7 +224,7 @@ class LivingPortrait {
   }
 
   update(dt, nowMs) {
-    if (this.readyCount < 2) return;
+    if (this.readyCount < this.frames.length) return;
 
     const timeSec = nowMs / 1000;
     const isForced = nowMs < this.forcedUntil;
@@ -252,10 +262,19 @@ class LivingPortrait {
     }
 
     const ctx = this.ctx;
+    const totalSegs = this.frames.length - 1;
+    const scaled = easedMorph * totalSegs;
+    const idxA = Math.min(totalSegs - 1, Math.floor(scaled));
+    const idxB = idxA + 1;
+    const localT = scaled - idxA;
+
+    const frameA = this.frames[idxA].off;
+    const frameB = this.frames[idxB].off;
+
     ctx.clearRect(0, 0, this.w, this.h);
-    ctx.drawImage(this.offIdle, 0, 0);
-    this.drawWarpedImage(this.offIdle, 1 - easedMorph * 0.94, timeSec);
-    this.drawWarpedImage(this.offActive, easedMorph, timeSec);
+    ctx.drawImage(frameA, 0, 0);
+    this.drawWarpedImage(frameA, 1 - localT * 0.92, timeSec);
+    this.drawWarpedImage(frameB, localT, timeSec);
 
     if (this.visitor) {
       if (nowMs >= this.visitor.until) {
