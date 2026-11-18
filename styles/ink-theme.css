@@ -387,29 +387,63 @@ html, body {
   display: flex;
 }
 
-@keyframes inkFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.975);
+/* 竖幅立轴：自上而下徐徐垂展 */
+.scroll-card.is-current:not(.is-landscape) .canvas-bezel {
+  animation: scrollUnfurlVertical 0.78s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* 横幅手卷：自左向右缓缓舒展 */
+.scroll-card.is-current.is-landscape .canvas-bezel {
+  animation: scrollUnfurlHorizontal 0.82s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes scrollUnfurlVertical {
+  0% {
+    opacity: 0.25;
+    clip-path: inset(0 0 92% 0);
+    transform: translateY(-10px) scaleY(0.96);
   }
-  to {
+  100% {
     opacity: 1;
-    transform: scale(1);
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0) scaleY(1);
   }
 }
 
-/* 画作背后的双层浓淡墨晕（直接托起画面主体） */
+@keyframes scrollUnfurlHorizontal {
+  0% {
+    opacity: 0.25;
+    clip-path: inset(0 92% 0 0);
+    transform: translateX(-12px) scaleX(0.96);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateX(0) scaleX(1);
+  }
+}
+
+@keyframes inkFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 画作背后的双层浓淡茶墨晕（自然衔接古画与水墨背景） */
 .ink-aura {
   position: absolute;
-  top: 2%;
-  left: -10%;
-  right: -10%;
-  bottom: 8%;
+  top: -3%;
+  left: -14%;
+  right: -14%;
+  bottom: 4%;
   border-radius: 50%;
   background: radial-gradient(
     ellipse at center,
-    rgba(24, 23, 20, 0.22) 0%,
-    rgba(52, 50, 45, 0.1) 46%,
+    rgba(116, 102, 78, 0.22) 0%,
+    rgba(38, 36, 32, 0.14) 44%,
     transparent 74%
   );
   filter: url(#ink-wash-heavy);
@@ -451,10 +485,17 @@ html, body {
   position: relative;
   padding: 0;
   background: transparent;
-  border: 1px solid rgba(34, 33, 30, 0.11);
-  box-shadow:
-    0 24px 56px -18px rgba(16, 15, 13, 0.34),
-    0 0 28px rgba(231, 229, 221, 0.55);
+  border: none;
+  box-shadow: none;
+  /* 四边柔和宣纸水墨羽化遮罩，消除矩形硬切边，使画作与水墨背景自然融合 */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 4.5%, #000 95.5%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 4%, #000 96%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 4.5%, #000 95.5%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 4%, #000 96%, transparent 100%);
+  mask-composite: intersect;
 }
 
 .portrait-canvas {

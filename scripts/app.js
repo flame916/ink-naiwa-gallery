@@ -57,7 +57,7 @@
   // 构建 6 幅去卡片化的宋式绫裱画轴与极简书法落款
   window.INK_PAINTINGS.forEach((item) => {
     const card = document.createElement("article");
-    card.className = "scroll-card";
+    card.className = item.isLandscape ? "scroll-card is-landscape" : "scroll-card";
     card.dataset.id = item.id;
 
     card.innerHTML = `
@@ -99,7 +99,11 @@
     activeIndex = ((nextIndex % total) + total) % total;
 
     cards.forEach((c, idx) => {
-      c.classList.toggle("is-current", idx === activeIndex);
+      c.classList.remove("is-current");
+      if (idx === activeIndex) {
+        void c.offsetWidth;
+        c.classList.add("is-current");
+      }
     });
     dotButtons.forEach((btn, idx) => {
       const active = idx === activeIndex;
