@@ -16,8 +16,8 @@
   --ink-light: #77746b;
   --ink-wash: #b4b1a6;
 
-  --cinnabar: #a62b21;
-  --cinnabar-soft: rgba(166, 43, 33, 0.14);
+  --cinnabar: #1a1917;
+  --cinnabar-soft: rgba(26, 25, 23, 0.12);
   --rosewood: #282623;
   --rosewood-dark: #141311;
 
@@ -173,7 +173,7 @@ html, body {
   line-height: 1.05;
   filter: url(#ink-bleed-edge);
   user-select: none;
-  box-shadow: 0 3px 12px rgba(166, 43, 33, 0.22);
+  box-shadow: 0 3px 12px rgba(26, 25, 23, 0.22);
 }
 
 .seal-logo span {
@@ -646,7 +646,7 @@ html, body {
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid var(--cinnabar);
-  box-shadow: 0 0 24px rgba(166, 43, 33, 0.42), 0 0 14px rgba(24, 20, 16, 0.45);
+  box-shadow: 0 0 24px rgba(26, 25, 23, 0.35), 0 0 14px rgba(24, 20, 16, 0.45);
   transform: translate(-50%, -50%);
   filter: url(#ink-bleed-edge);
 }
@@ -715,7 +715,7 @@ html, body {
   position: relative;
   flex: 1;
   background:
-    radial-gradient(circle at top right, rgba(166, 43, 33, 0.05), transparent 45%),
+    radial-gradient(circle at top right, rgba(26, 25, 23, 0.05), transparent 45%),
     var(--paper-light);
   border-top: 2px solid var(--rosewood);
   border-bottom: 2px solid var(--rosewood);
