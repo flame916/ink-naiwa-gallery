@@ -14,7 +14,7 @@ window.INK_PAINTINGS = [
     dimensions: "纸本水墨 · 48.7 × 27.7 厘米",
     memeName: "捧腹大笑系列（dot-naiwa-0325）",
     memeUrl: "https://naiwahub.com/zh/memes/dot-naiwa-0325",
-    idleSrc: "assets/paintings/01_pomo_waxian.png",
+    idleSrc: "assets/paintings/01_pomo_waxian.png?v=5",
     activeSrc: "assets/paintings/01_pomo_waxian_active.png",
     originalSrc: "assets/originals/01_original.jpg",
     // 画幅展示尺寸与横纵比（严格对齐 768x1376 原图比例，零拉伸失真）
